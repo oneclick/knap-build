@@ -1,0 +1,34 @@
+recipe "openssl", "1.0.0g" do
+  use :autotools
+
+  fetch "http://distfiles.macports.org/#{name}/#{name}-#{version}.tar.gz",
+    :md5 => "07ecbe4324f140d157478637d6beccf1"
+
+  before :extract do
+    # ignore symlink errors from package
+    if platform.mingw?
+      options.ignore_extract_errors = true
+    end
+  end
+
+  action :configure do
+    cmd = ["perl"]
+    if platform.posix?
+      cmd << "config"
+    else
+      cmd << "Configure"
+    end
+
+    if platform.mingw?
+      cmd << "mingw"
+    end
+
+    cmd.concat %w(zlib no-asm no-krb5 shared)
+    cmd << "--prefix=#{install_path}"
+    cmd << "--openssldir=#{install_path('etc/openssl')}"
+
+    puts :cmd => cmd.join(" ")
+
+    run cmd.join(" ")
+  end
+end
