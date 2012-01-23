@@ -47,6 +47,12 @@ module Knapsack
       instance_exec &@actions[name]
     end
 
+    def cook
+      sequence.each do |action|
+        perform action
+      end
+    end
+
     def run(cmd)
       pid = Process.spawn(cmd, :chdir => work_path, :err => :out, :out => IO::NULL)
       _, status = Process.wait2(pid)
