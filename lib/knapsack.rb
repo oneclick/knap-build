@@ -23,8 +23,8 @@ module Knapsack
   end
   module_function :distfiles_path
 
-  def extract_path(name, version)
-    File.join tmp_root, "work", name, version
+  def extract_path(name, version, filename = nil)
+    File.join *[tmp_root, "work", name, version, filename].compact
   end
   module_function :extract_path
 

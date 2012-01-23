@@ -70,9 +70,11 @@ module Knapsack
         raise ArgumentError.new("Unknown action '#{name}'")
       end
 
-      trigger :before, name
-      instance_exec &@actions[name]
-      trigger :after, name
+      checkpoint name do
+        trigger :before, name
+        instance_exec &@actions[name]
+        trigger :after, name
+      end
     end
 
     def trigger(event, action)
@@ -120,12 +122,21 @@ module Knapsack
       end
     end
 
+    def checkpoint(name)
+      checkfile = extract_path(".#{name}.stamp")
+
+      yield unless File.exists?(checkfile)
+
+      Knapsack::Utils.ensure_tree File.dirname(checkfile)
+      File.write(checkfile, Time.now)
+    end
+
     def distfiles_path(filename = nil)
       Knapsack.distfiles_path(name, filename)
     end
 
-    def extract_path
-      Knapsack.extract_path(name, version)
+    def extract_path(filename = nil)
+      Knapsack.extract_path(name, version, filename)
     end
 
     def work_path(filename = nil)
