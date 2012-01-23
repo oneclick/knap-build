@@ -9,6 +9,11 @@ module Knapsack
   end
   module_function :logger
 
+  def recipes
+    @recipes ||= Hash.new { |hash, key| hash[key] = {} }
+  end
+  module_function :recipes
+
   def root
     @root ||= File.expand_path "../..", __FILE__
   end

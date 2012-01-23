@@ -14,6 +14,23 @@ module Knapsack
     attr_reader :name, :version
     attr_writer :logger, :source_file
 
+    def self.find(name, version = nil)
+      recipe = nil
+
+      # determine if name was loaded
+      if versions = Knapsack.recipes[name]
+        if version
+          recipe = versions[version]
+        else version
+          # now find the latest version
+          sorted = versions.sort_by { |k, v| Gem::Version.new(k.dup) }
+          _, recipe = sorted.first
+        end
+      end
+
+      recipe
+    end
+
     def initialize(name, version, &block)
       @name     = name
       @version  = version
