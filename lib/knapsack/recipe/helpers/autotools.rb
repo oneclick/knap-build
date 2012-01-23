@@ -8,19 +8,23 @@ module Knapsack
           sequence :configure, :compile, :install
 
           action :configure do
-            run "sh #{options.configure} --prefix=#{install_path}"
+            cmd = "sh #{options.configure} --prefix=#{install_path}"
+            run cmd, :verbose => options.verbose
           end
 
           action :compile do
-            run "make -f #{options.makefile}"
+            cmd = "make -f #{options.makefile}"
+            run cmd, :verbose => options.verbose
           end
 
           action :install do
-            run "make install -f #{options.makefile}"
+            cmd = "make install -f #{options.makefile}"
+            run cmd, :verbose => options.verbose
           end
 
           after :install do
-            run "sh libtool --finish #{install_path('bin')}"
+            cmd = "sh libtool --finish #{install_path('bin')}"
+            run cmd, :verbose => options.verbose
           end
         end
       end

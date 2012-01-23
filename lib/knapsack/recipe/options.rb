@@ -4,7 +4,8 @@ module Knapsack
       DEFAULT = {
         :configure             => "configure",
         :makefile              => "Makefile",
-        :ignore_extract_errors => false
+        :ignore_extract_errors => false,
+        :verbose               => false
       }
 
       def initialize
@@ -33,6 +34,14 @@ module Knapsack
 
       def ignore_extract_errors=(value)
         @current[:ignore_extract_errors] = value
+      end
+
+      def verbose
+        @current.fetch(:verbose, DEFAULT[:verbose])
+      end
+
+      def verbose=(value)
+        @current[:verbose] = value
       end
     end
   end
