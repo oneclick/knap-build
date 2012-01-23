@@ -1,8 +1,14 @@
 require "knapsack/recipe"
 require "knapsack/recipe_loader"
 require "knapsack/utils"
+require "knapsack/logger"
 
 module Knapsack
+  def logger
+    @logger ||= Knapsack::Logger.new(STDOUT)
+  end
+  module_function :logger
+
   def root
     @root ||= File.expand_path "../..", __FILE__
   end

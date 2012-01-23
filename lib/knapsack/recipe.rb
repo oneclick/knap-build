@@ -10,6 +10,7 @@ module Knapsack
     include Helpers::Fetcher
 
     attr_reader :name, :version
+    attr_writer :logger
 
     def initialize(name, version, &block)
       @name     = name
@@ -24,6 +25,10 @@ module Knapsack
       @host = @target = RbConfig::CONFIG["target"]
 
       instance_exec &block
+    end
+
+    def logger
+      @logger ||= Knapsack.logger
     end
 
     def sequence(*args)
@@ -71,6 +76,8 @@ module Knapsack
       end
 
       checkpoint name do
+        announce name
+
         trigger :before, name
         instance_exec &@actions[name]
         trigger :after, name
@@ -129,6 +136,25 @@ module Knapsack
 
       Knapsack::Utils.ensure_tree File.dirname(checkfile)
       File.write(checkfile, Time.now)
+    end
+
+    def announce(action)
+      msg = case action
+      when :download
+        "Fetching files for %s %s..."
+      when :configure
+        "Configuring %s %s"
+      when :compile
+        "Building %s %s"
+      when :install
+        "Staging %s %s"
+      end
+
+      say msg % [name, version]
+    end
+
+    def say(message)
+      logger.info message
     end
 
     def distfiles_path(filename = nil)
