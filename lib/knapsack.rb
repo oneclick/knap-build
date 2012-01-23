@@ -48,4 +48,9 @@ module Knapsack
     File.join *[var_root, "software", name, version, filename].compact
   end
   module_function :install_path
+
+  def recipe_path(path, filename = nil)
+    File.join *[path, filename].compact
+  end
+  module_function :recipe_path
 end
