@@ -23,11 +23,8 @@ recipe "openssl", "1.0.0g" do
       cmd << "mingw"
     end
 
-    cmd.concat %w(zlib no-asm no-krb5 shared)
+    cmd << "shared"
     cmd << "--prefix=#{install_path}"
-    cmd << "--openssldir=#{install_path('etc/openssl')}"
-
-    puts :cmd => cmd.join(" ")
 
     run cmd.join(" ")
   end
