@@ -1,9 +1,14 @@
 require "rbconfig"
 require "knapsack/platform"
 require "knapsack/recipe/options"
+require "knapsack/recipe/helpers/autotools"
+require "knapsack/recipe/helpers/fetcher"
 
 module Knapsack
   class Recipe
+    include Helpers::Autotools
+    include Helpers::Fetcher
+
     attr_reader :name, :version
 
     def initialize(name, version, &block)
@@ -23,6 +28,12 @@ module Knapsack
       @sequence = args
     end
 
+    def prepend_sequence(*args)
+      args.reverse.each do |name|
+        @sequence.unshift(name) unless @sequence.include?(name)
+      end
+    end
+
     def platform
       @platform ||= Platform.new(@target, @host)
     end
@@ -37,6 +48,10 @@ module Knapsack
 
     def actions
       @actions.keys
+    end
+
+    def action?(name)
+      @actions.has_key?(name)
     end
 
     def perform(name)
@@ -62,6 +77,18 @@ module Knapsack
       end
 
       status.success?
+    end
+
+    def use(*helpers)
+      helpers.each do |name|
+        helper = :"define_#{name}"
+
+        unless respond_to?(helper)
+          raise ArgumentError.new("Unknown helper '#{name}'")
+        end
+
+        send helper
+      end
     end
 
     def distfiles_path(filename = nil)

@@ -1,16 +1,25 @@
 module Knapsack
   class Recipe
     class Options
-      DEFAULTS = {
-        :makefile => "Makefile"
+      DEFAULT = {
+        :configure => "configure",
+        :makefile  => "Makefile"
       }
 
       def initialize
         @current = {}
       end
 
+      def configure
+        @current.fetch(:configure, DEFAULT[:configure])
+      end
+
+      def configure=(value)
+        @current[:configure] = value
+      end
+
       def makefile
-        @current.fetch(:makefile, DEFAULTS[:makefile])
+        @current.fetch(:makefile, DEFAULT[:makefile])
       end
 
       def makefile=(value)
