@@ -18,6 +18,10 @@ module Knapsack
           action :install do
             run "make install -f #{options.makefile}"
           end
+
+          after :install do
+            run "sh libtool --finish #{install_path('bin')}"
+          end
         end
       end
     end

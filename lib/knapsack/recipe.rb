@@ -17,6 +17,9 @@ module Knapsack
       @sequence = []
       @actions  = {}
 
+      @before_hooks = Hash.new { |hash, key| hash[key] = [] }
+      @after_hooks  = Hash.new { |hash, key| hash[key] = [] }
+
       # default Platform host and target to current
       @host = @target = RbConfig::CONFIG["target"]
 
@@ -54,12 +57,38 @@ module Knapsack
       @actions.has_key?(name)
     end
 
+    def before(name, &block)
+      @before_hooks[name] << block
+    end
+
+    def after(name, &block)
+      @after_hooks[name] << block
+    end
+
     def perform(name)
       unless actions.include?(name)
-        raise ArgumentError.new("Unknown action #{name}")
+        raise ArgumentError.new("Unknown action '#{name}'")
       end
 
+      trigger :before, name
       instance_exec &@actions[name]
+      trigger :after, name
+    end
+
+    def trigger(event, action)
+      case event
+      when :before
+        hooks = @before_hooks
+      when :after
+        hooks = @after_hooks
+      else
+        raise ArgumentError.new("Invalid event '#{event}'")
+      end
+      return unless hooks.has_key?(action)
+
+      hooks[action].each do |hook|
+        instance_exec &hook
+      end
     end
 
     def cook
