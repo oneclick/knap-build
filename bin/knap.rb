@@ -1,7 +1,15 @@
 require "knapsack"
 
-recipe_file = Dir.glob("var/**/*.knapfile").sort.first
+files = Dir.glob("var/**/*.knapfile").sort
 
-recipe = Knapsack::RecipeLoader.load_from recipe_file
+recipes = files.collect { |f| Knapsack::RecipeLoader.load_from(f) }
 
-recipe.cook
+recipe_name = ARGV.pop
+puts :recipe_name => recipe_name
+
+recipe = recipes.find { |r| r.name == recipe_name }
+
+if recipe
+  puts :name => recipe.name, :version => recipe.version
+  recipe.cook
+end
