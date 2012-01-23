@@ -2,8 +2,9 @@ module Knapsack
   class Recipe
     class Options
       DEFAULT = {
-        :configure => "configure",
-        :makefile  => "Makefile"
+        :configure             => "configure",
+        :makefile              => "Makefile",
+        :ignore_extract_errors => false
       }
 
       def initialize
@@ -24,6 +25,14 @@ module Knapsack
 
       def makefile=(value)
         @current[:makefile] = value
+      end
+
+      def ignore_extract_errors
+        @current.fetch(:ignore_extract_errors, DEFAULT[:ignore_extract_errors])
+      end
+
+      def ignore_extract_errors=(value)
+        @current[:ignore_extract_errors] = value
       end
     end
   end

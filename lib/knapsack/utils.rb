@@ -10,14 +10,14 @@ module Knapsack
 
       cmd = ["curl", "-s", "-S", url, "-o", filename]
 
-      pid = Process.spawn(*cmd, :err => :out, :out => IO::NULL)
+      pid = Process.spawn(*cmd, :err => [:child, :out], :out => IO::NULL)
       _, status = Process.wait2(pid)
 
       status.success?
     end
     module_function :download
 
-    def extract(filename, md5, target)
+    def extract(filename, md5, target, options = {})
       ensure_tree target
 
       # verify checksum first
@@ -28,10 +28,10 @@ module Knapsack
 
       cmd = ["tar", "xf", filename, "-C", target]
 
-      pid = Process.spawn(*cmd, :err => :out, :out => IO::NULL)
+      pid = Process.spawn(*cmd, :err => [:child, :out], :out => IO::NULL)
       _, status = Process.wait2(pid)
 
-      status.success?
+      status.success? || options[:ignore_extract_errors]
     end
     module_function :extract
 

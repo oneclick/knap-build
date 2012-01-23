@@ -131,18 +131,22 @@ module Knapsack
 
     def run(cmd, options = {})
       flags = {
-        :err => :out, :out => IO::NULL,
+        :err => [:child, :out], :out => IO::NULL,
         :chdir => work_path,
       }
       if options.fetch(:nocd, false)
         flags.delete(:chdir)
       end
 
+      if options.fetch(:verbose, false)
+        flags[:out] = STDOUT
+      end
+
       pid = Process.spawn(cmd, flags)
       _, status = Process.wait2(pid)
 
       unless status.success?
-        raise "Failed to execute '#{cmd}', exitstatus: #{exitstatus}"
+        raise "Failed to execute '#{cmd}', exitstatus: #{status.exitstatus}"
       end
 
       status.success?

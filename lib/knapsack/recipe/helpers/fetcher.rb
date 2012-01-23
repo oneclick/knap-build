@@ -23,7 +23,9 @@ module Knapsack
 
           action :extract do
             @files.each do |filename, opt|
-              Knapsack::Utils.extract distfiles_path(filename), opt[:md5], extract_path
+              Knapsack::Utils.extract distfiles_path(filename),
+                opt[:md5], extract_path,
+                :ignore_extract_errors => options.ignore_extract_errors
             end
           end
 
