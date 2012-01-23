@@ -3,11 +3,13 @@ require "knapsack/platform"
 require "knapsack/recipe/options"
 require "knapsack/recipe/helpers/autotools"
 require "knapsack/recipe/helpers/fetcher"
+require "knapsack/recipe/helpers/patch"
 
 module Knapsack
   class Recipe
     include Helpers::Autotools
     include Helpers::Fetcher
+    include Helpers::Patch
 
     attr_reader :name, :version
     attr_writer :logger, :source_file
@@ -110,8 +112,16 @@ module Knapsack
       say "Done."
     end
 
-    def run(cmd)
-      pid = Process.spawn(cmd, :chdir => work_path, :err => :out, :out => IO::NULL)
+    def run(cmd, options = {})
+      flags = {
+        :err => :out, :out => IO::NULL,
+        :chdir => work_path,
+      }
+      if options.fetch(:nocd, false)
+        flags.delete(:chdir)
+      end
+
+      pid = Process.spawn(cmd, flags)
       _, status = Process.wait2(pid)
 
       unless status.success?
