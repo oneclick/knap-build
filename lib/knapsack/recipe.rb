@@ -10,7 +10,7 @@ module Knapsack
     include Helpers::Fetcher
 
     attr_reader :name, :version
-    attr_writer :logger
+    attr_writer :logger, :source_file
 
     def initialize(name, version, &block)
       @name     = name
@@ -171,6 +171,11 @@ module Knapsack
 
     def install_path(filename = nil)
       Knapsack.install_path(name, version, filename)
+    end
+
+    def recipe_path(filename = nil)
+      dirname = File.dirname(@source_file)
+      Knapsack.recipe_path(dirname, filename)
     end
   end
 end

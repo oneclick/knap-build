@@ -3,6 +3,7 @@ module Knapsack
     module Delegator
       def recipe(name, version, &block)
         r = Knapsack::Recipe.new(name, version, &block)
+        r.source_file = block.source_location.first
         Thread.current[:loaded_recipe] = r
       end
     end
