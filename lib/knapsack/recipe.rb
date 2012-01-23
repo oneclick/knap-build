@@ -101,9 +101,13 @@ module Knapsack
     end
 
     def cook
+      say "About to process %s version %s" % [name, version]
+
       sequence.each do |action|
         perform action
       end
+
+      say "Done."
     end
 
     def run(cmd)
@@ -141,13 +145,15 @@ module Knapsack
     def announce(action)
       msg = case action
       when :download
-        "Fetching files for %s %s..."
+        "Fetching files..."
+      when :extract
+        "Extracting files into work directory"
       when :configure
-        "Configuring %s %s"
+        "Configuring"
       when :compile
-        "Building %s %s"
+        "Building"
       when :install
-        "Staging %s %s"
+        "Staging"
       end
 
       say msg % [name, version]
