@@ -37,4 +37,9 @@ module Knapsack
     File.join *[base, filename].compact
   end
   module_function :work_path
+
+  def install_path(name, version, filename = nil)
+    File.join *[var_root, "software", name, version, filename].compact
+  end
+  module_function :install_path
 end

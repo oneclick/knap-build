@@ -35,6 +35,10 @@ module Knapsack
       darwin? || linux?
     end
 
+    def native?
+      !cross?
+    end
+
     def cross?
       @target != @host
     end

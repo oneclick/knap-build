@@ -47,6 +47,17 @@ module Knapsack
       instance_exec &@actions[name]
     end
 
+    def run(cmd)
+      pid = Process.spawn(cmd, :chdir => work_path, :err => :out, :out => IO::NULL)
+      _, status = Process.wait2(pid)
+
+      unless status.success?
+        raise "Failed to execute '#{cmd}', exitstatus: #{exitstatus}"
+      end
+
+      status.success?
+    end
+
     def distfiles_path(filename = nil)
       Knapsack.distfiles_path(name, filename)
     end
@@ -57,6 +68,10 @@ module Knapsack
 
     def work_path(filename = nil)
       Knapsack.work_path(name, version, filename)
+    end
+
+    def install_path(filename = nil)
+      Knapsack.install_path(name, version, filename)
     end
   end
 end
