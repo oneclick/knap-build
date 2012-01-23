@@ -1,19 +1,8 @@
 recipe "zlib", "1.2.5" do
-  sequence :download, :extract, :configure, :compile, :install
+  use :autotools
 
-  # fetch "http://distfiles.macports.org/zlib/#{name}-#{version}.tar.bz2",
-  #       :md5 => "be1e89810e66150f5b0327984d8625a0"
-  action :download do
-    filename = "#{name}-#{version}.tar.bz2"
-    url = "http://distfiles.macports.org/zlib/#{filename}"
-    Knapsack::Utils.download url, distfiles_path(filename)
-  end
-
-  action :extract do
-    filename = "#{name}-#{version}.tar.bz2"
-    md5 = "be1e89810e66150f5b0327984d8625a0"
-    Knapsack::Utils.extract distfiles_path(filename), md5, extract_path
-  end
+  fetch "http://distfiles.macports.org/zlib/#{name}-#{version}.tar.bz2",
+        :md5 => "be1e89810e66150f5b0327984d8625a0"
 
   action :configure do
     if platform.mingw?
@@ -41,13 +30,5 @@ recipe "zlib", "1.2.5" do
       # run will chdir into work_path prior executing the command
       run "sh configure --prefix=#{install_path}"
     end
-  end
-
-  action :compile do
-    run "make -f #{options.makefile}"
-  end
-
-  action :install do
-    run "make install -f #{options.makefile}"
   end
 end
