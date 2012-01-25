@@ -1,7 +1,8 @@
 require "rbconfig"
+require "ostruct"
+
 require "knapsack/platform"
 require "knapsack/recipe/loader"
-require "knapsack/recipe/options"
 require "knapsack/recipe/helpers/autotools"
 require "knapsack/recipe/helpers/fetcher"
 require "knapsack/recipe/helpers/patch"
@@ -11,6 +12,13 @@ module Knapsack
     include Helpers::Autotools
     include Helpers::Fetcher
     include Helpers::Patch
+
+    DEFAULT_OPTIONS = {
+      :configure             => "configure",
+      :makefile              => "Makefile",
+      :ignore_extract_errors => false,
+      :verbose               => false
+    }
 
     attr_reader :name, :version
     attr_writer :logger, :loaded_from
@@ -78,7 +86,7 @@ module Knapsack
     end
 
     def options
-      @options ||= Options.new
+      @options ||= OpenStruct.new(DEFAULT_OPTIONS)
     end
 
     def action(name, &block)

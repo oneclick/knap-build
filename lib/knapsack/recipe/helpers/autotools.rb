@@ -8,7 +8,8 @@ module Knapsack
           sequence :configure, :compile, :install
 
           action :configure do
-            cmd = "sh #{options.configure} --prefix=#{install_path}"
+            args = options.configure_args.join(" ")
+            cmd = "sh #{options.configure} #{args} --prefix=#{install_path}"
             run cmd, :verbose => options.verbose
           end
 
