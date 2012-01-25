@@ -3,15 +3,17 @@ require "knapsack"
 files = Dir.glob("#{Knapsack.var_root}/recipes/**/*.knapfile").sort
 
 files.each do |f|
-  recipe = Knapsack::RecipeLoader.load_from(f)
-  Knapsack.recipes[recipe.name][recipe.version] = recipe
+  Knapsack::Recipe.add_recipe(f)
 end
 
 recipe_name = ARGV.pop
-recipe = Knapsack::Recipe.find recipe_name
+recipe = Knapsack::Recipe.find_by_name recipe_name
 
 if recipe
-  recipe.cook
+  if recipe.pending?
+    recipe.cook
+  end
+  recipe.activate
 else
   abort "Recipe '#{recipe_name}' not found."
 end

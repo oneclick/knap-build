@@ -1,5 +1,6 @@
 require "rbconfig"
 require "knapsack/platform"
+require "knapsack/recipe/loader"
 require "knapsack/recipe/options"
 require "knapsack/recipe/helpers/autotools"
 require "knapsack/recipe/helpers/fetcher"
@@ -12,30 +13,41 @@ module Knapsack
     include Helpers::Patch
 
     attr_reader :name, :version
-    attr_writer :logger, :source_file
+    attr_writer :logger, :loaded_from
 
-    def self.find(name, version = nil)
-      recipe = nil
+    def self._all
+      @@all ||= []
+    end
 
-      # determine if name was loaded
-      if versions = Knapsack.recipes[name]
-        if version
-          recipe = versions[version]
-        else version
-          # now find the latest version
-          sorted = versions.sort_by { |k, v| Gem::Version.new(k.dup) }
-          _, recipe = sorted.first
-        end
-      end
+    def self._resort!
+      @@all.sort! { |a, b|
+        names = a.name <=> b.name
+        next names if names.nonzero?
+        b.version <=> a.version
+      }
+    end
 
-      recipe
+    def self.add_recipe(filename)
+      recipe = Loader.load_from(filename)
+
+      _all << recipe
+      _resort!
+    end
+
+    def self.find_by_name name, *requirements
+      requirements = Gem::Requirement.default if requirements.empty?
+      dependency = Gem::Dependency.new(name, *requirements)
+
+      _all.find { |r| dependency.match? r.name, r.version }
     end
 
     def initialize(name, version, &block)
-      @name     = name
-      @version  = version
-      @sequence = []
-      @actions  = {}
+      @name         = name
+      @version      = version
+      @sequence     = []
+      @actions      = {}
+      @activated    = false
+      @dependencies = []
 
       @before_hooks = Hash.new { |hash, key| hash[key] = [] }
       @after_hooks  = Hash.new { |hash, key| hash[key] = [] }
@@ -120,6 +132,7 @@ module Knapsack
     end
 
     def cook
+      activate_dependencies
       say "About to process %s version %s" % [name, version]
 
       sequence.each do |action|
@@ -162,6 +175,28 @@ module Knapsack
 
         send helper
       end
+    end
+
+    def depends_on(depname, *requirements)
+      if depname == name
+        raise ArgumentError.new("Recipe for '#{name}' can't depend on itself.")
+      end
+
+      dep = Gem::Dependency.new(depname, *requirements)
+
+      @dependencies << dep
+    end
+
+    def activate
+      raise_if_conflicts
+
+      return false if Knapsack.activated_recipes[name]
+
+      activate_paths
+      activate_dependencies
+
+      Knapsack.activated_recipes[name] = self
+      @activated = true
     end
 
     def checkpoint(name)
@@ -211,8 +246,60 @@ module Knapsack
     end
 
     def recipe_path(filename = nil)
-      dirname = File.dirname(@source_file)
+      dirname = File.dirname(@loaded_from)
       Knapsack.recipe_path(dirname, filename)
+    end
+
+    def raise_if_conflicts
+      other = Knapsack.activated_recipes[name]
+
+      if other and version != other.version
+        msg = "Can't activate #{name} #{version}, already activated #{other.name} #{other.version}"
+        raise msg
+      end
+    end
+
+    def activate_paths
+      vars = {
+        "PATH"         => install_path("bin"), # executables
+        "CPATH"        => install_path("include"), # headers
+        "LIBRARY_PATH" => install_path("lib"), # linking libraries
+      }.reject { |_, path| !File.directory?(path) }
+
+      say "Activating #{name} #{version}..."
+      vars.each do |var, path|
+        # turn into a valid Windows path (if required)
+        path.gsub!(File::SEPARATOR, File::ALT_SEPARATOR) if File::ALT_SEPARATOR
+
+        # save current variable value
+        old_value = ENV[var] || ''
+
+        unless old_value.include?(path)
+          ENV[var] = "#{path}#{File::PATH_SEPARATOR}#{old_value}"
+        end
+      end
+
+      # rely on LDFLAGS when cross-compiling
+      if vars.has_key?("LIBRARY_PATH") && platform.cross?
+        path = vars["LIBRARY_PATH"]
+
+        old_value = ENV.fetch("LDFLAGS", "")
+
+        unless old_value.include?(path)
+          ENV["LDFLAGS"] = "-L#{path} #{old_value}".strip
+        end
+      end
+    end
+
+    def activate_dependencies
+      return if @dependencies.empty?
+
+      say "Computing and activating dependencies for %s %s" % [name, version]
+      @dependencies.each do |dep|
+        if recipe = self.class.find_by_name(dep.name, dep.requirement)
+          recipe.activate
+        end
+      end
     end
   end
 end
