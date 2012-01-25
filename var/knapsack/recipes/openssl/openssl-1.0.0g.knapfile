@@ -4,6 +4,8 @@ recipe "openssl", "1.0.0g" do
   fetch "http://distfiles.macports.org/#{name}/#{name}-#{version}.tar.gz",
     :md5 => "07ecbe4324f140d157478637d6beccf1"
 
+  depends_on "zlib"
+
   before :extract do
     # ignore symlink errors from package
     if platform.mingw?
@@ -23,7 +25,7 @@ recipe "openssl", "1.0.0g" do
       cmd << "mingw"
     end
 
-    cmd << "shared"
+    cmd << "zlib-dynamic shared"
     cmd << "--prefix=#{install_path}"
 
     run cmd.join(" ")
