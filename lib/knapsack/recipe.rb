@@ -150,6 +150,10 @@ module Knapsack
       say "Done."
     end
 
+    def pending?
+      sequence.any? { |name| not File.exists?(extract_path(".#{name}.stamp")) }
+    end
+
     def run(cmd, options = {})
       flags = {
         :err => [:child, :out], :out => IO::NULL,
@@ -160,6 +164,7 @@ module Knapsack
       end
 
       if options.fetch(:verbose, false)
+        puts cmd
         flags[:out] = STDOUT
       end
 
@@ -200,8 +205,8 @@ module Knapsack
 
       return false if Knapsack.activated_recipes[name]
 
-      activate_paths
       activate_dependencies
+      activate_paths
 
       Knapsack.activated_recipes[name] = self
       @activated = true
