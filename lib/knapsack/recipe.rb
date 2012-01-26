@@ -205,7 +205,12 @@ module Knapsack
 
       return false if Knapsack.activated_recipes[name]
 
-      activate_dependencies
+      if pending?
+        cook
+      else
+        activate_dependencies
+      end
+
       activate_paths
 
       Knapsack.activated_recipes[name] = self
