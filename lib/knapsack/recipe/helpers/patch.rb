@@ -8,7 +8,8 @@ module Knapsack
             patches = Dir.glob(recipe_path("*.{diff,patch}")).sort
 
             patches.each do |patchfile|
-              run "git apply --directory #{work_path} #{patchfile}", :nocd => true
+              cmd = "git apply --directory #{work_path} #{patchfile}"
+              run cmd, :nocd => true, :verbose => options.verbose
             end
           end
         end
