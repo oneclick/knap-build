@@ -241,7 +241,7 @@ module Knapsack
       when :configure
         "Configuring"
       when :compile
-        "Building"
+        "Compiling"
       when :install
         "Staging"
       end
@@ -278,7 +278,7 @@ module Knapsack
       other = Knapsack.activated_recipes[name]
 
       if other and version != other.version
-        msg = "Can't activate #{name} #{version}, already activated #{other.name} #{other.version}"
+        msg = "Can't activate #{name} version #{version}, already activated version #{other.version}"
         raise msg
       end
     end
@@ -290,7 +290,7 @@ module Knapsack
         "LIBRARY_PATH" => install_path("lib"), # linking libraries
       }.reject { |_, path| !File.directory?(path) }
 
-      say "Activating #{name} #{version}..."
+      say "Activating #{name} version #{version}..."
       vars.each do |var, path|
         # turn into a valid Windows path (if required)
         path.gsub!(File::SEPARATOR, File::ALT_SEPARATOR) if File::ALT_SEPARATOR
@@ -318,7 +318,7 @@ module Knapsack
     def activate_dependencies
       return if @dependencies.empty?
 
-      say "Computing and activating dependencies for %s %s" % [name, version]
+      say "Computing and activating dependencies for #{name} version #{version}"
       @dependencies.each do |dep|
         if recipe = self.class.find_by_name(dep.name, dep.requirement)
           recipe.activate
