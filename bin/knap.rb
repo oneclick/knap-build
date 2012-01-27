@@ -11,6 +11,8 @@ end
 recipe_name = ARGV.pop
 recipe = Knapsack::Recipe.find_by_name recipe_name
 
+exit if defined?(Exerb)
+
 if recipe
   if recipe.pending?
     recipe.cook

@@ -16,7 +16,10 @@ module Knapsack
   module_function :activated_recipes
 
   def root
-    @root ||= File.expand_path "../..", __FILE__
+    @root ||= begin
+      file = defined?(ExerbRuntime) ? ExerbRuntime.filepath : __FILE__
+      File.expand_path "../..", file
+    end
   end
   module_function :root
 
