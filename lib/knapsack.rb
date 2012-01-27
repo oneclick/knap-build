@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 require "knapsack/recipe"
 require "knapsack/utils"
 require "knapsack/logger"

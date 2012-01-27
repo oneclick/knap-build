@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 require "knapsack"
 
 files = Dir.glob("#{Knapsack.var_root}/recipes/**/*.knapfile").sort

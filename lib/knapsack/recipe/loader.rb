@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 module Knapsack
   class Recipe
     module Loader

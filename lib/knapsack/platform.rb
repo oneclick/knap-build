@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 module Knapsack
   class Platform
     RE_X86    = /i\d86/
