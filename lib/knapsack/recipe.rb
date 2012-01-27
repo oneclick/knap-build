@@ -61,6 +61,8 @@ module Knapsack
       @sequence     = []
       @actions      = {}
       @activated    = false
+      @activate_dependencies = false
+
       @dependencies = []
 
       @before_hooks = Hash.new { |hash, key| hash[key] = [] }
@@ -317,6 +319,7 @@ module Knapsack
 
     def activate_dependencies
       return if @dependencies.empty?
+      return if @activated_dependencies
 
       say "Computing and activating dependencies for #{name} version #{version}"
       @dependencies.each do |dep|
@@ -324,6 +327,8 @@ module Knapsack
           recipe.activate
         end
       end
+
+      @activated_dependencies = true
     end
   end
 end
