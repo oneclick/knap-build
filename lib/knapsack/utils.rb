@@ -10,7 +10,7 @@ module Knapsack
 
       ensure_tree File.dirname(filename)
 
-      cmd = ["curl", "-s", "-S", url, "-o", filename]
+      cmd = ["curl", "-L", "-s", "-S", url, "-o", filename]
 
       pid = Process.spawn(*cmd, :err => [:child, :out], :out => IO::NULL)
       _, status = Process.wait2(pid)
