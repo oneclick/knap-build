@@ -9,6 +9,9 @@ require "knapsack/recipe/helpers/autotools"
 require "knapsack/recipe/helpers/fetcher"
 require "knapsack/recipe/helpers/patch"
 
+# hack
+require "knapsack/recipe/dependency"
+
 module Knapsack
   class Recipe
     include Helpers::Autotools
@@ -197,7 +200,7 @@ module Knapsack
         raise ArgumentError.new("Recipe for '#{name}' can't depend on itself.")
       end
 
-      dep = Gem::Dependency.new(depname, *requirements)
+      dep = ::Gem::Dependency.new(depname, *requirements)
 
       @dependencies << dep
     end
