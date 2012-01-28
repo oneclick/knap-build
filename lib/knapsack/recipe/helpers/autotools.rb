@@ -16,12 +16,14 @@ module Knapsack
           end
 
           action :compile do
-            cmd = "make -f #{options.makefile}"
+            args = options.make_args.join(" ")
+            cmd = "make -f #{options.makefile} #{args}"
             run cmd, :verbose => options.verbose
           end
 
           action :install do
-            cmd = "make install -f #{options.makefile}"
+            args = options.make_args.join(" ")
+            cmd = "make install -f #{options.makefile} #{args}"
             run cmd, :verbose => options.verbose
           end
 

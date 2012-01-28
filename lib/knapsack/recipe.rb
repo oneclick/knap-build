@@ -22,6 +22,7 @@ module Knapsack
       :configure             => "configure",
       :makefile              => "Makefile",
       :configure_args        => [],
+      :make_args             => [],
       :ignore_extract_errors => false,
       :verbose               => false
     }
