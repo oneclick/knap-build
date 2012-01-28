@@ -26,7 +26,7 @@ module Knapsack
           end
 
           after :install do
-            cmd = "sh libtool --finish #{install_path('bin')}"
+            cmd = "sh libtool --finish #{install_path('lib')}"
             run cmd, :verbose => options.verbose
           end
         end
