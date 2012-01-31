@@ -209,6 +209,14 @@ module Knapsack
       @dependencies << dep
     end
 
+    def dependencies
+      return [] if @dependencies.empty?
+
+      @dependencies.collect { |dep|
+        self.class.find_by_name(dep.name, dep.requirement)
+      }.compact
+    end
+
     def activate
       raise_if_conflicts
 
