@@ -17,13 +17,17 @@ module Knapsack
 
           action :download do
             @files.each do |filename, opt|
-              Knapsack::Utils.download opt[:url], distfiles_path(filename)
+              name = opt.fetch(:as, filename)
+
+              Knapsack::Utils.download opt[:url], distfiles_path(name)
             end
           end
 
           action :extract do
             @files.each do |filename, opt|
-              Knapsack::Utils.extract distfiles_path(filename),
+              name = opt.fetch(:as, filename)
+
+              Knapsack::Utils.extract distfiles_path(name),
                 opt[:md5], extract_path,
                 :ignore_extract_errors => options.ignore_extract_errors
             end
