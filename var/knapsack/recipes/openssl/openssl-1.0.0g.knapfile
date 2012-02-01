@@ -22,7 +22,11 @@ recipe "openssl", "1.0.0g" do
     end
 
     if platform.mingw?
-      cmd << "mingw"
+      if platform.x64?
+        cmd << "mingw64"
+      else
+        cmd << "mingw"
+      end
     end
 
     cmd << "zlib-dynamic shared"
