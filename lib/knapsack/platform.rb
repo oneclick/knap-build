@@ -44,5 +44,23 @@ module Knapsack
     def cross?
       @target != @host
     end
+
+    def to_s
+      parts = []
+
+      case
+      when x86?
+        parts << "x86"
+      when x64?
+        parts << "x64"
+      end
+
+      case
+      when mingw?
+        parts << "windows"
+      end
+
+      parts.join("-")
+    end
   end
 end
