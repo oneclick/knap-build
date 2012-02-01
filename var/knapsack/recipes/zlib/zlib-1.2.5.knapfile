@@ -23,6 +23,15 @@ recipe "zlib", "1.2.5" do
         # enable shared object
         mk.sub!(/^SHARED_MODE\s*=\d*$/, "SHARED_MODE = 1")
 
+        # ensure IMPLIB is libz.dll.a
+        mk.sub!(/^IMPLIB\s*=.*$/, "IMPLIB = libz.dll.a")
+
+        # install do not depend on static library
+        mk.sub!(/install\:.*\$\(STATICLIB\)/, "install: zlib.h zconf.h $(IMPLIB)")
+
+        # do not install static library
+        mk.sub!(/-\$\(INSTALL\) \$\(STATICLIB\)/, "# do not install static library")
+
         # write the original Makefile content
         f.puts mk
       end
