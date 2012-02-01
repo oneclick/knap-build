@@ -28,6 +28,6 @@ recipe "openssl", "1.0.0g" do
     cmd << "zlib-dynamic shared"
     cmd << "--prefix=#{install_path}"
 
-    run cmd.join(" ")
+    run cmd.join(" "), :verbose => options.verbose
   end
 end
