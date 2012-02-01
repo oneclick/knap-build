@@ -90,6 +90,11 @@ module Knapsack
       end
     end
 
+    def platform=(value)
+      @target = @host = value
+      @platform = nil
+    end
+
     def platform
       @platform ||= Platform.new(@target, @host)
     end
@@ -269,15 +274,15 @@ module Knapsack
     end
 
     def extract_path(filename = nil)
-      Knapsack.extract_path(name, version, filename)
+      Knapsack.extract_path(name, version, platform, filename)
     end
 
     def work_path(filename = nil)
-      Knapsack.work_path(name, version, filename)
+      Knapsack.work_path(name, version, platform, filename)
     end
 
     def install_path(filename = nil)
-      Knapsack.install_path(name, version, filename)
+      Knapsack.install_path(name, version, platform, filename)
     end
 
     def recipe_path(filename = nil)
