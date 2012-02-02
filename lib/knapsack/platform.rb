@@ -46,6 +46,10 @@ module Knapsack
     end
 
     def to_s
+      @target
+    end
+
+    def simplified
       parts = []
 
       case
