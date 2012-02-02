@@ -23,10 +23,6 @@ recipe "zlib", "1.2.6" do
         # enable shared object
         mk.sub!(/^SHARED_MODE\s*=\d*$/, "SHARED_MODE = 1")
 
-        # ensure IMPLIB is libz.dll.a
-        # (so linking with -lz will prefer shared instead of static)
-        mk.sub!(/^IMPLIB\s*=.*$/, "IMPLIB = libz.dll.a")
-
         # write the original Makefile content
         f.puts mk
       end
