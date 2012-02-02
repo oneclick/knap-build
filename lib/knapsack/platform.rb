@@ -8,6 +8,8 @@ module Knapsack
     RE_DARWIN = /darwin/
     RE_LINUX  = /linux(-gnu)?$/
 
+    attr_reader :target, :host
+
     def initialize(target, host = nil)
       @target = target
       @host = host
@@ -43,10 +45,6 @@ module Knapsack
 
     def cross?
       @target != @host
-    end
-
-    def to_s
-      @target
     end
 
     def simplified

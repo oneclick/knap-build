@@ -155,7 +155,7 @@ module Knapsack
 
     def cook
       activate_dependencies
-      say "About to process %s version %s" % [name, version]
+      say "About to process %s version %s (%s)" % [name, version, platform.simplified]
 
       sequence.each do |action|
         perform action
@@ -222,7 +222,10 @@ module Knapsack
       }.compact
     end
 
-    def activate
+    def activate(target = nil)
+      # adjust platform if provided
+      self.platform = target if target
+
       raise_if_conflicts
 
       return false if Knapsack.activated_recipes[name]
@@ -306,7 +309,7 @@ module Knapsack
         "LIBRARY_PATH" => install_path("lib"), # linking libraries
       }.reject { |_, path| !File.directory?(path) }
 
-      say "Activating #{name} version #{version}..."
+      say "Activating #{name} version #{version} (#{platform.simplified})..."
       vars.each do |var, path|
         # turn into a valid Windows path (if required)
         path.gsub!(File::SEPARATOR, File::ALT_SEPARATOR) if File::ALT_SEPARATOR
@@ -335,11 +338,10 @@ module Knapsack
       return if @dependencies.empty?
       return if @activated_dependencies
 
-      say "Computing and activating dependencies for #{name} version #{version}"
-      @dependencies.each do |dep|
-        if recipe = self.class.find_by_name(dep.name, dep.requirement)
-          recipe.activate
-        end
+      say "Computing and activating dependencies for #{name} version #{version} (#{platform.simplified})"
+      dependencies.each do |recipe|
+        # activate the recipe for the same platform
+        recipe.activate platform.target
       end
 
       @activated_dependencies = true
