@@ -28,8 +28,12 @@ module Knapsack
           end
 
           after :install do
-            cmd = "sh libtool --finish #{install_path('lib')}"
-            run cmd, :verbose => options.verbose
+            # only perform finish of libs if directory exists
+            dir = install_path("lib")
+            if File.directory?(dir)
+              cmd = "sh libtool --finish #{dir}"
+              run cmd, :verbose => options.verbose
+            end
           end
         end
       end
