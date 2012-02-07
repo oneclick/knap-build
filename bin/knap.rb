@@ -3,13 +3,30 @@
 require "knapsack"
 require "optparse"
 
+# find and load recipes
 files = Dir.glob("#{Knapsack.var_root}/recipes/**/*.knapfile").sort
-
 files.each do |f|
   Knapsack::Recipe.add_recipe(f)
 end
 
 options = {}
+
+# determine current platform from gcc -v
+platform_re = /^Target\: (.*)$/
+
+output = `gcc -v 2>&1`
+if m = output.match(platform_re)
+  # deal with special "mingw32" platform (mingw.org)
+  if m[1] == "mingw32"
+    options[:platform] = "i686-pc-mingw32"
+  else
+    options[:platform] = m[1]
+  end
+end
+
+plat = Knapsack::Platform.new(options[:platform])
+puts "--> Detected platform: #{plat.target} (#{plat.simplified})"
+
 opts = OptionParser.new do |opts|
   opts.on("-p", "--platform PLATFORM", "Specify the target platform") do |v|
     options[:platform] = v
