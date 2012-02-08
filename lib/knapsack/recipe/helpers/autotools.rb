@@ -10,8 +10,18 @@ module Knapsack
           sequence :configure, :compile, :install
 
           action :configure do
-            args = options.configure_args.join(" ")
-            cmd = "sh #{options.configure} #{args} --prefix=#{install_path}"
+            args = ["sh", options.configure]
+
+            # detect or add --host option for configure
+            host_re = /--host/
+            unless options.configure_args.find { |o| o =~ host_re }
+              args << "--host=#{platform.target}"
+            end
+
+            args << "--prefix=#{install_path}"
+            args.concat options.configure_args
+
+            cmd = args.join(" ")
             run cmd, :verbose => options.verbose
           end
 
