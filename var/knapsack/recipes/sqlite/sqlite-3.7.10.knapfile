@@ -6,7 +6,7 @@ recipe "sqlite", "3.7.10" do
 
   before :configure do
     cflags = "-O2 -DSQLITE_ENABLE_COLUMN_METADATA"
-    cflags << " -fPIC" if platform.x64?
+    cflags << " -fPIC" if platform.x64? && !platform.mingw?
     options.configure_args << "CFLAGS='#{cflags}'"
   end
 end
