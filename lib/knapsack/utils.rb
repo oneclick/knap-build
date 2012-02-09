@@ -41,5 +41,46 @@ module Knapsack
       FileUtils.mkdir_p target
     end
     module_function :ensure_tree
+
+    def package(recipe)
+      # name-version-platform.tar.lzma
+      filename = "%s-%s-%s.tar.lzma" % [recipe.name, recipe.version, recipe.platform.simplified]
+      pkg_name = Knapsack.packages_path(recipe.name, filename)
+
+      ensure_tree File.dirname(pkg_name)
+
+      unless File.exists?(pkg_name)
+        path = recipe.install_path
+        manifest = File.join(path, ".manifest")
+
+        entries = Dir.glob("#{path}/**/*")
+        entries << manifest
+
+        # remove directories
+        entries.reject! { |e| File.directory?(e) }
+
+        # remove recipe path
+        entries.map! { |e| e.gsub("#{path}/", "") }
+
+        # write down manifest file for package (.manifest)
+        File.open(manifest, "w") do |f|
+          entries.each do |e|
+            f.puts e
+          end
+        end
+
+        # tar --lzma
+        puts "--> Building binary package #{filename}..."
+        system "tar --lzma -cf #{pkg_name} -I #{manifest} -C #{path}"
+
+        # Generate MD5
+        File.open("#{pkg_name}.md5", "w") do |f|
+          f.puts '%s *%s' % [Digest::MD5.file(pkg_name).hexdigest, filename]
+        end
+
+        puts "--> Done."
+      end
+    end
+    module_function :package
   end
 end
