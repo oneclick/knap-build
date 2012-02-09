@@ -70,7 +70,16 @@ module Knapsack
 
         # tar --lzma
         puts "--> Building binary package #{filename}..."
-        system "tar --lzma -cf #{pkg_name} -I #{manifest} -C #{path} .manifest"
+
+        args = ["tar", "--lzma", "-cf"]
+        args << pkg_name
+        args << "-I" << manifest
+        args << "-C" << path
+
+        args << File.basename(manifest)
+
+        cmd = args.join(" ")
+        system cmd
 
         # Generate MD5
         File.open("#{pkg_name}.md5", "w") do |f|
