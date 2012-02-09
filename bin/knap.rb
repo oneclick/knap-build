@@ -57,6 +57,8 @@ if recipe
     recipe.cook
   end
   recipe.activate
+
+  Knapsack::Utils.package recipe
 else
   abort "Recipe '#{recipe_name}' not found."
 end
