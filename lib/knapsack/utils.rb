@@ -53,8 +53,7 @@ module Knapsack
         path = recipe.install_path
         manifest = File.join(path, ".manifest")
 
-        entries = Dir.glob("#{path}/**/*")
-        entries << manifest
+        entries = Dir.glob("#{path}/**/*").sort
 
         # remove directories
         entries.reject! { |e| File.directory?(e) }
@@ -71,7 +70,7 @@ module Knapsack
 
         # tar --lzma
         puts "--> Building binary package #{filename}..."
-        system "tar --lzma -cf #{pkg_name} -I #{manifest} -C #{path}"
+        system "tar --lzma -cf #{pkg_name} -I #{manifest} -C #{path} .manifest"
 
         # Generate MD5
         File.open("#{pkg_name}.md5", "w") do |f|
