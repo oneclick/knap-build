@@ -38,6 +38,11 @@ module Knapsack
   end
   module_function :distfiles_path
 
+  def packages_path(name, filename = nil)
+    File.join *[var_root, "packages", name, filename].compact
+  end
+  module_function :packages_path
+
   def extract_path(name, version, platform, filename = nil)
     File.join *[tmp_root, "work", platform.simplified, name, version, filename].compact
   end
