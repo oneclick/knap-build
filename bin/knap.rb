@@ -32,6 +32,10 @@ opts = OptionParser.new do |opts|
     options[:platform] = v
   end
 
+  opts.on("--version VERSION", "Specify the desired version") do |v|
+    options[:version] = v
+  end
+
   opts.on("-v", "--[no-]verbose", "Run verbosely") do |v|
     options[:verbose] = v
   end
@@ -39,7 +43,9 @@ end
 opts.parse!(ARGV)
 
 recipe_name = ARGV.pop
-recipe = Knapsack::Recipe.find_by_name recipe_name
+recipe_version = options.fetch(:version, ">= 0")
+
+recipe = Knapsack::Recipe.find_by_name recipe_name, recipe_version
 
 exit if defined?(Exerb)
 
