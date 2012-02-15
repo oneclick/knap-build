@@ -214,6 +214,10 @@ module Knapsack
       @dependencies << dep
     end
 
+    def dep_list
+      @dependencies
+    end
+
     def dependencies
       return [] if @dependencies.empty?
 

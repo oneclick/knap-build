@@ -2,6 +2,7 @@
 
 require "digest/md5"
 require "fileutils"
+require "psych"
 
 module Knapsack
   module Utils
@@ -51,8 +52,25 @@ module Knapsack
 
       unless File.exists?(pkg_name)
         path = recipe.install_path
-        manifest = File.join(path, ".manifest")
+        meta_file = File.join(path, ".metadata")
+        entries_list = File.join(path, ".entries")
 
+        metadata = {
+          "package"      => {
+            "name"     => recipe.name,
+            "version"  => recipe.version,
+            "platform" => recipe.platform.simplified
+          },
+          "dependencies" => [],
+          "entries"      => []
+        }
+
+        # metadata.dependencies
+        recipe.dep_list.each do |dep|
+          metadata["dependencies"] << { dep.name => dep.requirement.to_s }
+        end
+
+        # metadata.entries
         entries = Dir.glob("#{path}/**/*").sort
 
         # remove directories
@@ -61,11 +79,16 @@ module Knapsack
         # remove recipe path
         entries.map! { |e| e.gsub("#{path}/", "") }
 
-        # write down manifest file for package (.manifest)
-        File.open(manifest, "w") do |f|
-          entries.each do |e|
-            f.puts e
-          end
+        metadata["entries"] = entries
+
+        # persist entries list
+        File.open(entries_list, "w") do |f|
+          f.puts entries
+        end
+
+        # persist metadata
+        File.open(meta_file, "w") do |f|
+          f.puts Psych.dump(metadata)
         end
 
         # tar --lzma
@@ -73,10 +96,10 @@ module Knapsack
 
         args = ["tar", "--lzma", "-cf"]
         args << pkg_name
-        args << "-I" << manifest
+        args << "-I" << entries_list
         args << "-C" << path
 
-        args << File.basename(manifest)
+        args << File.basename(meta_file)
 
         cmd = args.join(" ")
         system cmd
