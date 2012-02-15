@@ -2,6 +2,6 @@ recipe "libyaml", "0.1.4" do
   use :autotools
   use :patch
 
-  fetch "http://pyyaml.org/download/libyaml/yaml-#{version}.tar.gz",
+  fetch "http://distfiles.openknapsack.org/#{name}/yaml-#{version}.tar.gz",
     :md5 => "36c852831d02cf90508c29852361d01b"
 end
