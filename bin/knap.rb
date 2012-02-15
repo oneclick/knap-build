@@ -3,60 +3,69 @@
 require "knapsack"
 require "optparse"
 
-# find and load recipes
-files = Dir.glob("#{Knapsack.var_root}/recipes/**/*.knapfile").sort
-files.each do |f|
-  Knapsack::Recipe.add_recipe(f)
+def parse_options(options)
+  opts = OptionParser.new do |opts|
+    opts.on("-p", "--platform PLATFORM", "Specify the target platform") do |v|
+      options[:platform] = v
+    end
+
+    opts.on("-v VERSION", "--version VERSION", "Specify the desired version") do |v|
+      options[:version] = v
+    end
+
+    opts.on("-V", "--[no-]verbose", "Run verbosely") do |v|
+      options[:verbose] = v
+    end
+  end
+  opts.parse!(ARGV)
+end
+
+def load_recipes
+  # find and load recipes
+  files = Dir.glob("#{Knapsack.var_root}/recipes/**/*.knapfile").sort
+  files.each do |f|
+    Knapsack::Recipe.add_recipe(f)
+  end
+end
+
+def detect_platform
+  # determine current platform from gcc -v
+  platform_re = /^Target\: (.*)$/
+
+  output = `gcc -v 2>&1`
+  if m = output.match(platform_re)
+    # deal with special "mingw32" platform (mingw.org)
+    if m[1] == "mingw32"
+      "i686-pc-mingw32"
+    else
+      m[1]
+    end
+  end
 end
 
 options = {}
 
-# determine current platform from gcc -v
-platform_re = /^Target\: (.*)$/
-
-output = `gcc -v 2>&1`
-if m = output.match(platform_re)
-  # deal with special "mingw32" platform (mingw.org)
-  if m[1] == "mingw32"
-    options[:platform] = "i686-pc-mingw32"
-  else
-    options[:platform] = m[1]
-  end
-end
-
-plat = Knapsack::Platform.new(options[:platform])
-puts "--> Detected platform: #{plat.target} (#{plat.simplified})"
-
-opts = OptionParser.new do |opts|
-  opts.on("-p", "--platform PLATFORM", "Specify the target platform") do |v|
-    options[:platform] = v
-  end
-
-  opts.on("-v VERSION", "--version VERSION", "Specify the desired version") do |v|
-    options[:version] = v
-  end
-
-  opts.on("-V", "--[no-]verbose", "Run verbosely") do |v|
-    options[:verbose] = v
-  end
-end
-opts.parse!(ARGV)
+parse_options options
+load_recipes
 
 recipe_name = ARGV.pop
 recipe_version = options.fetch(:version, ">= 0")
 
-recipe = Knapsack::Recipe.find_by_name recipe_name, recipe_version
-
 exit if defined?(Exerb)
 
-if recipe
+if recipe = Knapsack::Recipe.find_by_name(recipe_name, recipe_version)
+  unless options.has_key?(:platform)
+    options[:platform] = detect_platform
+
+    plat = Knapsack::Platform.new options[:platform]
+    puts "--> Detected platform: #{plat.target} (#{plat.simplified})"
+  end
+
+  recipe.platform = options[:platform]
+
   # set options
   if options.has_key?(:verbose)
     recipe.options.verbose = options[:verbose]
-  end
-
-  if options.has_key?(:platform)
-    recipe.platform = options[:platform]
   end
 
   if recipe.pending?
