@@ -32,11 +32,11 @@ opts = OptionParser.new do |opts|
     options[:platform] = v
   end
 
-  opts.on("--version VERSION", "Specify the desired version") do |v|
+  opts.on("-v VERSION", "--version VERSION", "Specify the desired version") do |v|
     options[:version] = v
   end
 
-  opts.on("-v", "--[no-]verbose", "Run verbosely") do |v|
+  opts.on("-V", "--[no-]verbose", "Run verbosely") do |v|
     options[:verbose] = v
   end
 end
