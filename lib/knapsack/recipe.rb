@@ -267,6 +267,8 @@ module Knapsack
         "Compiling"
       when :install
         "Staging"
+      else
+        "Performing '#{action}'"
       end
 
       say msg % [name, version]
