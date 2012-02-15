@@ -168,16 +168,16 @@ module Knapsack
       sequence.any? { |name| not File.exists?(extract_path(".#{name}.stamp")) }
     end
 
-    def run(cmd, options = {})
+    def run(cmd, opt = {})
       flags = {
         :err => [:child, :out], :out => IO::NULL,
         :chdir => work_path,
       }
-      if options.fetch(:nocd, false)
+      if opt.fetch(:nocd, false)
         flags.delete(:chdir)
       end
 
-      if options.fetch(:verbose, false)
+      if opt.fetch(:verbose, options.verbose)
         puts cmd
         flags[:out] = STDOUT
       end
