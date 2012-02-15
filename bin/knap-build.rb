@@ -5,16 +5,28 @@ require "optparse"
 
 def parse_options(options)
   opts = OptionParser.new do |opts|
-    opts.on("-p", "--platform PLATFORM", "Specify the target platform") do |v|
+    opts.banner = "Usage: knap-build RECIPENAME [options]"
+
+    opts.separator ""
+    opts.separator "Specific options:"
+
+    opts.on("--platform PLATFORM", "Specify the target platform") do |v|
       options[:platform] = v
     end
 
-    opts.on("-v VERSION", "--version VERSION", "Specify the desired version") do |v|
+    opts.on("-v", "--version VERSION", "Specify the desired version") do |v|
       options[:version] = v
     end
 
     opts.on("-V", "--[no-]verbose", "Run verbosely") do |v|
       options[:verbose] = v
+    end
+
+    opts.separator ""
+    opts.separator "Packaging options:"
+
+    opts.on("--package", "Enable build binary package") do |v|
+      options[:package] = v
     end
   end
   opts.parse!(ARGV)
@@ -73,7 +85,9 @@ if recipe = Knapsack::Recipe.find_by_name(recipe_name, recipe_version)
   end
   recipe.activate
 
-  Knapsack::Utils.package recipe
+  if options.fetch(:package, false)
+    Knapsack::Utils.package recipe
+  end
 else
   abort "Recipe '#{recipe_name}' not found."
 end
