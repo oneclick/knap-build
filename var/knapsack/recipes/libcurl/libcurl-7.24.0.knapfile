@@ -22,12 +22,10 @@ recipe "libcurl", "7.24.0" do
   action :install do
     # we only need libs, headers and docs
     %w(lib include docs).each do |dir|
-      cmd = "make -f #{options.makefile} -C #{dir} install"
-      run cmd, :verbose => options.verbose
+      run "make -f #{options.makefile} -C #{dir} install"
     end
 
     # also install pkg-config information
-    cmd = "make -f #{options.makefile} install-pkgconfigDATA"
-    run cmd, :verbose => options.verbose
+    run "make -f #{options.makefile} install-pkgconfigDATA"
   end
 end

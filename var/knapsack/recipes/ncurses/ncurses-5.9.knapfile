@@ -9,7 +9,5 @@ recipe "ncurses", "5.9" do
       "--without-debug", "--enable-widec",
       "--enable-term-driver", "--enable-sp-funcs"
     ]
-
-    options.verbose = true
   end
 end

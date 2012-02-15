@@ -15,6 +15,6 @@ recipe "libpq", "9.1.2" do
     end
 
     args = args.join(" ")
-    run "cmake . #{args}", :verbose => options.verbose
+    run "cmake . #{args}"
   end
 end
