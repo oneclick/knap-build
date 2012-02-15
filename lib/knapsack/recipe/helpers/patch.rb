@@ -9,7 +9,7 @@ module Knapsack
 
             patches.each do |patchfile|
               cmd = "git apply --directory #{work_path} #{patchfile}"
-              run cmd, :nocd => true, :verbose => options.verbose
+              run cmd, :nocd => true
             end
           end
         end

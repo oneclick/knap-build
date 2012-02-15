@@ -22,19 +22,19 @@ module Knapsack
             args.concat options.configure_args
 
             cmd = args.join(" ")
-            run cmd, :verbose => options.verbose
+            run cmd
           end
 
           action :compile do
             args = options.make_args.join(" ")
             cmd = "make -f #{options.makefile} #{args}"
-            run cmd, :verbose => options.verbose
+            run cmd
           end
 
           action :install do
             args = options.make_args.join(" ")
             cmd = "make install -f #{options.makefile} #{args}"
-            run cmd, :verbose => options.verbose
+            run cmd
           end
 
           after :install do
@@ -42,7 +42,7 @@ module Knapsack
             dir = install_path("lib")
             if File.directory?(dir)
               cmd = "sh libtool --finish #{dir}"
-              run cmd, :verbose => options.verbose
+              run cmd
             end
           end
         end
