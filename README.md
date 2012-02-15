@@ -38,7 +38,7 @@ needs and attempt to cover those into something more contained.
 From that experimentation, I've created 'knap-build':
 
   http://packages.openknapsack.org/knap-build/knap-build-0.0.1.7z
-  (md5: ???)
+  (md5: c5820f6dfa6e7dc92cc14777817db477)
 
 The above package includes both knap-build tool and a series of recipes. Feel
 free to extract it into any folder as long "bin" and "var" folders remain at
@@ -56,7 +56,8 @@ In order to test-drive this tool, you will require:
 * Git (for applying patches)
 
 These requirements needs to be in the PATH, so git, curl, gcc and make
-commands are available.
+commands are available. You can use devkitvars.bat to get DevKit into the
+PATH.
 
 ## Building recipes
 
@@ -91,7 +92,7 @@ depend on each other.
 
 ## Recipe structure
 
-Recipes are a group of actions that executed in sequence by the builder.
+Recipes are a group of actions that are executed in sequence by the builder.
 
 This is a valid recipe:
 
@@ -130,12 +131,12 @@ Multiple blocks can be executed before or after, but only one can be executed
 as action itself.
 
 Included in the Recipe DSL exists helpers like 'use' and 'fetch', which their
-only purpose is automate the definition of specific kind of actions.
+only purpose is automate the definition of specific actions.
 
 * Autotools (use :autotool)
 
 Results in the definition of actions configure, compile and install that
-follows autoconf/autotools behavior (configure script, make, make install)
+follows autoconf/autotools behavior (configure, make, make install)
 
 * Patch (use :patch)
 
