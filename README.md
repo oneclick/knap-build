@@ -233,7 +233,7 @@ activate those binary packages.
 
 Feel free to download, extract, modify and experiment with the included
 recipes or create your own. Please send your feedback to the list with your
-tou
+thoughts.
 
 Now, before leaving, the mandatory Why You did What, er, FAQ:
 
