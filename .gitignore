@@ -1,6 +1,4 @@
 *.exe
 *.exy
-var/*/distfiles
-var/*/software
-var/tmp
+var
 tmp
