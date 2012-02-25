@@ -76,8 +76,8 @@ module Knapsack
         # remove directories
         entries.reject! { |e| File.directory?(e) }
 
-        # remove recipe path
-        entries.map! { |e| e.gsub("#{path}/", "") }
+        # remove recipe path and ensure proper encoding
+        entries.map! { |e| e.gsub("#{path}/", "").encode(Encoding::UTF_8) }
 
         metadata["entries"] = entries
 
