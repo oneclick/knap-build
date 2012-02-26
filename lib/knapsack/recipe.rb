@@ -182,7 +182,10 @@ module Knapsack
         flags[:out] = STDOUT
       end
 
-      pid = Process.spawn(cmd, flags)
+      # additional environment variables
+      env = opt.fetch(:env, {})
+
+      pid = Process.spawn(env, cmd, flags)
       _, status = Process.wait2(pid)
 
       unless status.success?
