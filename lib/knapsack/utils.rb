@@ -29,7 +29,7 @@ module Knapsack
         raise "MD5 verification failed for #{File.basename(filename)} (expected: #{md5}, was: #{computed_md5}"
       end
 
-      cmd = ["tar", "xf", filename, "-C", target]
+      cmd = ["tar", "-xf", filename, "-C", target]
 
       pid = Process.spawn(*cmd, :err => [:child, :out], :out => IO::NULL)
       _, status = Process.wait2(pid)
