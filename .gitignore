@@ -1,4 +1,4 @@
 *.exe
 *.exy
-var
-tmp
+/var
+/tmp
