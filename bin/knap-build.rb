@@ -34,7 +34,7 @@ end
 
 def load_recipes
   # find and load recipes
-  files = Dir.glob("#{Knapsack.var_root}/recipes/**/*.knapfile").sort
+  files = Dir.glob("#{Knapsack.root}/recipes/**/*.knapfile").sort
   files.each do |f|
     Knapsack::Recipe.add_recipe(f)
   end
