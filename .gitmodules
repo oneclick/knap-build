@@ -1,4 +1,4 @@
 [submodule "recipes"]
 	path = recipes
-	url = git@github.com:luislavena/knapsack-recipes.git
+	url = https://github.com/luislavena/knapsack-recipes.git
 	branch = master
