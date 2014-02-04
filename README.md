@@ -165,7 +165,7 @@ requested recipe.
 
 ### Platform conditionals and options
 
-During the execution of actions, the platform that the recipe is targeting is 
+During the execution of actions, the platform that the recipe is targeting is
 available using 'platform' helper:
 
   before :configure do
