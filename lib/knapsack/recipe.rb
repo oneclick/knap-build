@@ -53,7 +53,11 @@ module Knapsack
       requirements = Gem::Requirement.default if requirements.empty?
       dependency = Gem::Dependency.new(name, *requirements)
 
-      _all.find { |r| dependency.match? r.name, r.version }
+      candidates = _all.select { |r|
+        dependency.match? r.name, r.version
+      }.sort_by { |r| r.version }
+
+      candidates.last
     end
 
     def initialize(name, version, &block)
