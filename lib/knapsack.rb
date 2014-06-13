@@ -44,7 +44,7 @@ module Knapsack
   module_function :packages_path
 
   def extract_path(name, version, platform, filename = nil)
-    File.join *[tmp_root, "work", platform.simplified, name, version, filename].compact
+    File.join *[tmp_root, "work", platform.simplified, name, version.to_s, filename].compact
   end
   module_function :extract_path
 
@@ -59,7 +59,7 @@ module Knapsack
   module_function :work_path
 
   def install_path(name, version, platform, filename = nil)
-    File.join *[var_root, "software", platform.simplified, name, version, filename].compact
+    File.join *[var_root, "software", platform.simplified, name, version.to_s, filename].compact
   end
   module_function :install_path
 
