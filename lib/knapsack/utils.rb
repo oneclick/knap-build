@@ -58,7 +58,7 @@ module Knapsack
         metadata = {
           "package"      => {
             "name"     => recipe.name,
-            "version"  => recipe.version,
+            "version"  => recipe.version.to_s,
             "platform" => recipe.platform.simplified
           },
           "dependencies" => [],
