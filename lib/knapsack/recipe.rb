@@ -58,7 +58,7 @@ module Knapsack
 
     def initialize(name, version, &block)
       @name         = name
-      @version      = version
+      @version      = Gem::Version.new(version)
       @sequence     = []
       @actions      = {}
       @activated    = false
