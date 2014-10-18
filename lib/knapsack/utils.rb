@@ -1,6 +1,7 @@
 # encoding: UTF-8
 
 require "digest/md5"
+require "digest/sha2"
 require "fileutils"
 require "psych"
 
@@ -107,6 +108,11 @@ module Knapsack
         # Generate MD5
         File.open("#{pkg_name}.md5", "w") do |f|
           f.puts '%s *%s' % [Digest::MD5.file(pkg_name).hexdigest, filename]
+        end
+
+        # Generate SHA256
+        File.open("#{pkg_name}.sha256", "w") do |f|
+          f.puts "%s *%s" % [Digest::SHA256.file(pkg_name).hexdigest, filename]
         end
 
         puts "--> Done."
