@@ -27,9 +27,18 @@ module Knapsack
             @files.each do |filename, opt|
               name = opt.fetch(:as, filename)
 
-              Knapsack::Utils.extract distfiles_path(name),
-                opt[:md5], extract_path,
+              combined = {
                 :ignore_extract_errors => options.ignore_extract_errors
+              }
+
+              opt.has_key?(:sha256) and
+                combined.update(:sha256 => opt[:sha256])
+
+              opt.has_key?(:md5) and
+                combined.update(:md5 => opt[:md5])
+
+              Knapsack::Utils.extract(distfiles_path(name), extract_path,
+                                        combined)
             end
           end
 

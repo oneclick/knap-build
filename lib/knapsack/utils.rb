@@ -21,13 +21,21 @@ module Knapsack
     end
     module_function :download
 
-    def extract(filename, md5, target, options = {})
+    def extract(filename, target, options = {})
       ensure_tree target
 
-      # verify checksum first
-      computed_md5 = Digest::MD5.file(filename).hexdigest
-      unless computed_md5 == md5
-        raise "MD5 verification failed for #{File.basename(filename)} (expected: #{md5}, was: #{computed_md5}"
+      failure_message = "%s verification failed for #{File.basename(filename)} (expected: %s, was: %s)"
+
+      if options.has_key?(:sha256)
+        digest = Digest::SHA256.file(filename).hexdigest
+        (digest == options[:sha256]) or
+          raise failure_message % ["SHA256", options[:sha256], digest]
+      end
+
+      if options.has_key?(:md5)
+        digest = Digest::MD5.file(filename).hexdigest
+        (digest == options[:md5]) or
+          raise failure_message % ["MD5", options[:md5], digest]
       end
 
       cmd = ["tar", "-xf", filename, "-C", target]
