@@ -1,3 +1,5 @@
+*The following is a copy of the original email sent to RubyInstaller group*
+
 Hello,
 
 As promised last week, was going to share something I've worked on my free
@@ -145,7 +147,7 @@ performed 'before' configure action.
 
 * Fetch (fetch)
 
-* It defines files to be downloaded and extracted for this recipe. This
+It defines files to be downloaded and extracted for this recipe. This
 defines download and extract actions.
 
 For example, take a look to zlib and openssl recipes. Both 'uses' autotools
