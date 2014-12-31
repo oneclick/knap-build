@@ -1,3 +1,20 @@
+# knap-build
+
+Standarized recipe DSL to build and package software for Windows.
+
+## Maintainer needed
+
+As January 1st, 2015, this project has become unmaintained:
+
+https://groups.google.com/d/topic/rubyinstaller/nzpIDZqXO-Q/discussion
+
+If you want to take over maintenance of this project, please [open an issue](https://github.com/luislavena/knap-build/issues) stating your intention and
+we can coordinate the entire process there.
+
+Thank you.
+
+---
+
 *The following is a copy of the original email sent to RubyInstaller group*
 
 Hello,
