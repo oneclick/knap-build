@@ -267,7 +267,7 @@ module Knapsack
       when :download
         "Fetching files..."
       when :extract
-        "Extracting files into work directory"
+        "Extracting files into working directory"
       when :configure
         "Configuring"
       when :compile
