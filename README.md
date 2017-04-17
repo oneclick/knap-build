@@ -51,7 +51,7 @@ free to extract it into any folder as long "bin" and "var" folders remain at
 the same level.
 
 Inside "bin" you will find a pre-compiled version of knap-build, which will
-allow you compile the recipes provided inside "var/knapsack/recipes" folder.
+allow you to compile the recipes provided inside "var/knapsack/recipes" folder.
 
 ## Requirements
 
@@ -61,7 +61,7 @@ In order to test-drive this tool, you will require:
 * curl command line utility (for download archives)
 * Git (for applying patches)
 
-These requirements needs to be in the PATH, so git, curl, gcc and make
+These requirements need to be in the PATH, so git, curl, gcc and make
 commands are available. You can use devkitvars.bat to get DevKit into the
 PATH.
 
@@ -74,7 +74,7 @@ recipes, e.g.:
 
 This will build latest version of the indicated recipe (at this time, 1.2.6)
 
-You can use -h option to see other options, like building an specific version:
+You can use -h option to see other options, like building a specific version:
 
   bin\knap-build zlib --version 1.2.5
 
