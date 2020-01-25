@@ -3,7 +3,10 @@
 require "digest/md5"
 require "digest/sha2"
 require "fileutils"
+require "open-uri"
 require "psych"
+require 'zlib'
+require 'rubygems/package'
 
 module Knapsack
   module Utils
@@ -12,12 +15,9 @@ module Knapsack
 
       ensure_tree File.dirname(filename)
 
-      cmd = ["curl", "-L", "-s", "-S", url, "-o", filename]
+      tmpfile = open(url, ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE)
 
-      pid = Process.spawn(*cmd, :err => [:child, :out], :out => IO::NULL)
-      _, status = Process.wait2(pid)
-
-      status.success?
+      File.open(filename, "wb") { |file| file.write(tmpfile.read) }
     end
     module_function :download
 
@@ -38,12 +38,32 @@ module Knapsack
           raise failure_message % ["MD5", options[:md5], digest]
       end
 
-      cmd = ["tar", "-xf", filename, "-C", target]
+      file = File.open(filename, "rb")
 
-      pid = Process.spawn(*cmd, :err => [:child, :out], :out => IO::NULL)
-      _, status = Process.wait2(pid)
+      Gem::Package::TarReader.new(Zlib::GzipReader.new(file)) do |tar|
+        symlinks = {}
 
-      status.success? || options[:ignore_extract_errors]
+        tar.each do |entry|
+          dest = File.join(target, entry.full_name)
+
+          if entry.header.typeflag != '2'
+            FileUtils.mkdir_p(File.dirname(dest))
+          else
+            src = File.dirname(dest) + "/" + entry.header.linkname
+            symlinks[src] = dest
+          end
+
+          if entry.file?
+            File.open(dest, "wb") { |f| f.write(entry.read) }
+          end
+        end
+
+        symlinks.each do |src, dest|
+          FileUtils.cp_r(src, dest)
+        end
+      end
+
+      file.close
     end
     module_function :extract
 

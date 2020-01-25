@@ -54,7 +54,7 @@ module Knapsack
       dependency = Gem::Dependency.new(name, *requirements)
 
       candidates = _all.select { |r|
-        dependency.match? r.name, r.version
+        dependency.match? r.name, r.version.to_s.gsub(/[a-z]/i, "")
       }.sort_by { |r| r.version }
 
       candidates.last
